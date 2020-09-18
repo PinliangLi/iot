@@ -63,13 +63,21 @@ def angle_right(car, angle_acc):
     angle = angle - angle_acc * delta
     car.set_angle(angle)
 
-def mouse_turn(positionX):
-    relevateX = positionX - width/2
-    if relevateX < -10:
-        mouse_turn_left(angle_cur, angle_acc)
-    elif relevateX > 10:
-        mouse_turn_right(angle_cur, angle_acc)
 
+def mouse_turn(positionX, car, angle_acc):
+    relevateX = positionX - width/2
+    if relevateX < -100:
+        angle_left(car, angle_acc)
+    elif relevateX > 100:
+        angle_right(car, angle_acc)
+
+
+def mouse_speed(positionY, car, acc, dec):
+    relevateY = positionY - width/2
+    if relevateY < -100:
+        speed_up(car, acc)
+    if relevateY > 100:
+        speed_down(car, dec)
 
 running = True
 try:
@@ -138,8 +146,8 @@ try:
         
         if use_mouse:
             mouse_position = pygame.mouse.get_pos()
-            mouse_turn(car, mouse_position[0])
-            mouse_speed(mouse_position[1])
+            mouse_turn(mouse_position[0], car, angle_acc)
+            mouse_speed(mouse_position[1], car, acc, dec)
         
         if car.get_engine_state():
             if keystates['up']:
@@ -154,12 +162,12 @@ try:
             if keystates['right']:
                 angle_right(car, angle_acc)
         else :
-            if car.get_speed() > 0.001:
+            if car.get_speed() > 0.05:
                 speed = car.get_speed()
                 frict = (frict/2) * (1 + math.erf( (math.fabs(speed) - 11/2) / (math.sqrt(2 * 4**2)) ))
                 speed = speed + frict * delta
                 car.set_speed(speed)
-            elif car.get_speed() < 0.001:
+            elif car.get_speed() < -0.05:
                 speed = car.get_speed()
                 frict = (frict/2) * (1 + math.erf( (math.fabs(speed) - 11/2) / (math.sqrt(2 * 4**2)) ))
                 speed = speed - frict * delta
@@ -168,19 +176,6 @@ try:
                 speed = car.get_speed()
                 speed = 0
                 car.set_speed(speed)
-
-            if car.get_angle() > 4:
-                angle = car.get_angle()
-                angle = angle - angle_acc * delta
-                angle = car.set_angle(angle)
-            elif car.get_angle() < -4:
-                angle = car.get_angle()
-                angle = angle + angle_acc * delta
-                angle = car.set_angle(angle)
-            else:
-                angle = car.get_angle()
-                angle = 0
-                car.set_angle(angle)
 
 
 
@@ -194,7 +189,6 @@ try:
         speed_cur = car.get_speed()
         angle_cur = car.get_angle()
         print ("({},{} --> {})".format(speed_cur, angle_cur, (speed_cur - last) / delta))
-        print ("({},{} --> {})".format(speed_cur, angle_cur, (angle_cur - angle_last) / delta))
 except KeyboardInterrupt:
     print ("Exiting through keyboard event (CTRL + C)")
     
