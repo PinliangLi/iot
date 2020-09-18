@@ -159,7 +159,7 @@ try:
                 frict = (frict/2) * (1 + math.erf( (math.fabs(speed) - 11/2) / (math.sqrt(2 * 4**2)) ))
                 speed = speed + frict * delta
                 car.set_speed(speed)
-            elif car.get_speed() < 0.001:
+            elif car.get_speed() < - 0.001:
                 speed = car.get_speed()
                 frict = (frict/2) * (1 + math.erf( (math.fabs(speed) - 11/2) / (math.sqrt(2 * 4**2)) ))
                 speed = speed - frict * delta
@@ -169,11 +169,11 @@ try:
                 speed = 0
                 car.set_speed(speed)
 
-            if car.get_angle() > 4:
+            if car.get_angle() > 0 and (keystates['left'] == False):
                 angle = car.get_angle()
                 angle = angle - angle_acc * delta
                 angle = car.set_angle(angle)
-            elif car.get_angle() < -4:
+            elif car.get_angle() < 0 and (keystates['right'] == False):
                 angle = car.get_angle()
                 angle = angle + angle_acc * delta
                 angle = car.set_angle(angle)

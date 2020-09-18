@@ -5,6 +5,9 @@
 #######################################################################
 
 import gpio_class
+import car_model
+
+car = car_model.Car()
 
 def write(servo, pulse):
     gpio_class.write(servo, pulse)
@@ -16,6 +19,7 @@ class Motor(object):
     def __init__(self, servo=None):
         return
     def set_speed(self, speed):
+        
         return
     def stop(self):
         return
