@@ -144,12 +144,13 @@ try:
         if keystates['quit']:
             running = False
         
-        if use_mouse:
-            mouse_position = pygame.mouse.get_pos()
-            mouse_turn(mouse_position[0], car, angle_acc)
-            mouse_speed(mouse_position[1], car, acc, dec)
         
         if car.get_engine_state():
+            if use_mouse:
+                mouse_position = pygame.mouse.get_pos()
+                mouse_turn(mouse_position[0], car, angle_acc)
+                mouse_speed(mouse_position[1], car, acc, dec)
+                print(car.get_engine_state())
             if keystates['up']:
                 speed_up(car, acc)
 
