@@ -69,13 +69,7 @@ def mouse_turn(positionX):
         mouse_turn_left(angle_cur, angle_acc)
     elif relevateX > 10:
         mouse_turn_right(angle_cur, angle_acc)
-<<<<<<< HEAD
 
-def mouse_speed(positionY):
-    relevateY = positionY 
-
-=======
->>>>>>> 00630fbab422d7ef03868c721256a6f04501df09
 
 running = True
 try:
