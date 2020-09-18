@@ -59,7 +59,8 @@ def mouse_turn(positionX):
     elif relevateX > 10:
         mouse_turn_right(angle_cur, angle_acc)
     
-
+def fdsafdsafdsa():
+    pass
 
 running = True
 try:
