@@ -36,7 +36,7 @@ clock = pygame.time.Clock()
 car = car_model.Car()
 
 # States of the keys
-keystates = {'quit':False, 'up':False, 'down':False, 'reset_speed':False, 'engine_state':False, 'first_press': False}
+keystates = {'quit':False, 'up':False, 'down':False, 'reset_speed':False, 'engine_state':False}
 
 
 running = True
@@ -47,8 +47,9 @@ try:
         
         # save the last speed 4 analysis
         last = speed_cur
-
-
+        acc=2.6
+        dec=4.5
+        frict=-1
         # process input events
         for event in pygame.event.get():
         
@@ -61,20 +62,13 @@ try:
                 if event.key == pygame.K_q:
                     keystates['quit'] = True
                 if event.key == pygame.K_UP:
-                    if keystates['up'] == False:
-                        keystates['first_press'] = True
-                    if keystates['up'] == True:
-                        keystates['first_press'] = False
-
                     keystates['up'] = True
                 if event.key == pygame.K_DOWN:
-                    if keystates['down'] == False:
-                        keystates['first_press'] = True
-                    if keystates['down'] == True:
-                        keystates['first_press'] = False
                     keystates['down'] = True
                 if event.key == pygame.K_r:
                     keystates['reset_speed'] = True
+                if event.key == pygame.K_s:
+                    keystates['engine_state'] = True
 
             # check for key up events (release)
             if event.type == pygame.KEYUP:
@@ -82,13 +76,12 @@ try:
                     keystates['quit'] = False
                 if event.key == pygame.K_UP:
                     keystates['up'] = False
-                    keystates['first_press'] = False
                 if event.key == pygame.K_DOWN:
                     keystates['down'] = False
-                    keystates['first_press'] = False
                 if event.key == pygame.K_r:
                     keystates['reset_speed'] = False
                 if event.key == pygame.K_s:
+                    keystates['engine_state'] = False
                     car.change_engine_state()
 
 
@@ -96,10 +89,7 @@ try:
         if keystates['quit']:
             running = False
         
-        if keystates['first_press'] == True:
-            acc=2.6
-            dec=4.5
-
+        
         if car.get_engine_state():
             if keystates['up']:
                 speed = car.get_speed()
@@ -132,7 +122,6 @@ try:
         if keystates['reset_speed']:
             car.reset_speed()
 
-        print(keystates['first_press'])
         speed_cur = car.get_speed()
         print ("({},{} --> {})".format(speed_cur, angle_cur, (speed_cur - last) / delta))
     
