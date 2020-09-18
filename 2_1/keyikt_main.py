@@ -8,8 +8,10 @@ import sys, time
 import random
 import car_model
 import math
-import pygame       
-
+import pygame 
+import RPi.GPIO as GPIO
+import servo_ctrl
+        
 
 width = 800
 height = 600
@@ -33,7 +35,9 @@ screen = pygame.display.set_mode((width, height))
 
 # get a clock to generate frequent behaviour
 clock = pygame.time.Clock()
+
 car = car_model.Car()
+motor = servo_ctrl.Motor()
 
 # States of the keys
 keystates = {'quit':False, 'up':False, 'down':False, 'reset_speed':False, 'reset_angle':False, 'engine_state':False, 'mouse_event':False, 'left':False, 
@@ -86,6 +90,16 @@ def mouse_speed(positionY, car, acc, dec):
     if relevateY > 100:
         speed_down(car, dec)
 
+def PWM_speed_up(Motor, acc):
+    speed =  Motor.get_speed() + acc * delta
+    Motor.set_speed(speed)
+
+
+def PWM_speed_down(Motor, dec):
+    speed =  Motor.get_speed() - dec * delta
+    Motor.set_speed(speed)
+
+
 running = True
 try:
     while running:
@@ -98,6 +112,8 @@ try:
         acc=2.6
         dec=4.5
         frict=-1
+        pwmacc = 1
+        pwmdec = 1
         # process input events
         for event in pygame.event.get():
         
@@ -199,15 +215,15 @@ try:
             angle_cur = car.get_angle()
 
         else :
-            if car.get_engine_state():
+            if motor.get_engine_state():
                 if use_mouse:
                     mouse_position = pygame.mouse.get_pos()
                 
                 if keystates['up']:
-                    pass
+                    PWM_speed_up(motor, pwmacc)
 
                 if keystates['down']:
-                    pass
+                    PWM_speed_down(motor, pwmdec)
 
                 if keystates['left']:
                     pass
