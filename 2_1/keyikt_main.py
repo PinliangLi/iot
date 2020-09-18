@@ -36,7 +36,8 @@ clock = pygame.time.Clock()
 car = car_model.Car()
 
 # States of the keys
-keystates = {'quit':False, 'up':False, 'down':False, 'reset_speed':False, 'engine_state':False, 'mouse_event':False}
+keystates = {'quit':False, 'up':False, 'down':False, 'reset_speed':False, 'reset_angle':False, 'engine_state':False, 'mouse_event':False, 'left':False, 
+             'right':False}
 use_mouse = False
 pygame.mouse.set_pos([width/2, height/2])
 
@@ -51,6 +52,16 @@ def speed_down(car, dec):
     dec = dec - (dec/2) * (1 + math.erf( (math.fabs(speed) - 5.5) / (math.sqrt(2 * math.pow(2.5, 2))) ))
     speed = speed - dec * delta
     car.set_speed(speed)
+
+def angle_left(car, angle_acc):
+    angle = car.get_angle()
+    angle = angle + angle_acc * delta
+    car.set_angle(angle)
+
+def angle_right(car, angle_acc):
+    angle = car.get_angle()
+    angle = angle - angle_acc * delta
+    car.set_angle(angle)
 
 def mouse_turn(positionX):
     relevateX = positionX - width/2
@@ -71,6 +82,7 @@ try:
         
         # save the last speed 4 analysis
         last = speed_cur
+        angle_last = angle_cur
         acc=2.6
         dec=4.5
         frict=-1
@@ -89,8 +101,13 @@ try:
                     keystates['up'] = True
                 if event.key == pygame.K_DOWN:
                     keystates['down'] = True
+                if event.key == pygame.K_LEFT:
+                    keystates['left'] = True
+                if event.key == pygame.K_RIGHT:
+                    keystates['right'] = True
                 if event.key == pygame.K_r:
                     keystates['reset_speed'] = True
+                    keystates['reset_angle'] = True
                 if event.key == pygame.K_s:
                     keystates['engine_state'] = True
                 if event.key == pygame.K_m:
@@ -104,8 +121,13 @@ try:
                     keystates['up'] = False
                 if event.key == pygame.K_DOWN:
                     keystates['down'] = False
+                if event.key == pygame.K_LEFT:
+                    keystates['left'] = False
+                if event.key == pygame.K_RIGHT:
+                    keystates['right'] = False
                 if event.key == pygame.K_r:
                     keystates['reset_speed'] = False
+                    keystates['rest_angle'] = False
                 if event.key == pygame.K_s:
                     keystates['engine_state'] = False
                     car.change_engine_state()
@@ -128,6 +150,12 @@ try:
 
             if keystates['down']:
                 speed_down(car, dec)
+
+            if keystates['left']:
+                angle_left(car, angle_acc)
+
+            if keystates['right']:
+                angle_right(car, angle_acc)
         else :
             if car.get_speed() > 0.001:
                 speed = car.get_speed()
@@ -144,18 +172,36 @@ try:
                 speed = 0
                 car.set_speed(speed)
 
+            if car.get_angle() > 4:
+                angle = car.get_angle()
+                angle = angle - angle_acc * delta
+                angle = car.set_angle(angle)
+            elif car.get_angle() < -4:
+                angle = car.get_angle()
+                angle = angle + angle_acc * delta
+                angle = car.set_angle(angle)
+            else:
+                angle = car.get_angle()
+                angle = 0
+                car.set_angle(angle)
+
+
 
         if keystates['reset_speed']:
             car.reset_speed()
+        if keystates['reset_angle']:
+            car.reset_angle()
 
 
 
         speed_cur = car.get_speed()
+        angle_cur = car.get_angle()
         print ("({},{} --> {})".format(speed_cur, angle_cur, (speed_cur - last) / delta))
-    
+        print ("({},{} --> {})".format(speed_cur, angle_cur, (angle_cur - angle_last) / delta))
 except KeyboardInterrupt:
     print ("Exiting through keyboard event (CTRL + C)")
     
+
 # gracefully exit pygame here
 pygame.quit()
 
