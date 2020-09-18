@@ -37,8 +37,9 @@ car = car_model.Car()
 
 # States of the keys
 keystates = {'quit':False, 'up':False, 'down':False, 'reset_speed':False, 'reset_angle':False, 'engine_state':False, 'mouse_event':False, 'left':False, 
-             'right':False}
+             'right':False, 'simulate': False}
 use_mouse = False
+simulate = True
 pygame.mouse.set_pos([width/2, height/2])
 
 def speed_up(car, acc):
@@ -51,6 +52,12 @@ def speed_down(car, dec):
     speed = car.get_speed()
     dec = dec - (dec/2) * (1 + math.erf( (math.fabs(speed) - 5.5) / (math.sqrt(2 * math.pow(2.5, 2))) ))
     speed = speed - dec * delta
+    car.set_speed(speed)
+
+def speed_frict(car, frict):
+    speed = car.get_speed()
+    frict = (frict/2) * (1 + math.erf( (math.fabs(speed) - 11/2) / (math.sqrt(2 * 4**2)) ))
+    speed = speed + frict * delta
     car.set_speed(speed)
 
 def angle_left(car, angle_acc):
@@ -98,6 +105,9 @@ try:
             if event.type == pygame.QUIT:
                 running = False
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                use_mouse = True
+                keystates['engine_state'] = True
             # check for key down events (press)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
@@ -115,8 +125,14 @@ try:
                     keystates['reset_angle'] = True
                 if event.key == pygame.K_s:
                     keystates['engine_state'] = True
+                    car.change_engine_state()
                 if event.key == pygame.K_m:
-                    keystates['mouse_event'] = True
+                    if use_mouse:
+                        use_mouse = False
+                if event.key == pygame.K_v:
+                    keystates['simulate'] = True
+                    simulate = not simulate
+                    
 
             # check for key up events (release)
             if event.type == pygame.KEYUP:
@@ -135,60 +151,73 @@ try:
                     keystates['rest_angle'] = False
                 if event.key == pygame.K_s:
                     keystates['engine_state'] = False
-                    car.change_engine_state()
                 if event.key == pygame.K_m:
-                    use_mouse = not use_mouse
-                    keystates['mouse_event'] = False
-
+                    if use_mouse:
+                        use_mouse = False
+                if event.key == pygame.K_v:
+                    keystates['simulate'] = False
         # do something about the key states here, now that the event queue has been processed
         if keystates['quit']:
             running = False
         
-        
-        if car.get_engine_state():
-            if use_mouse:
-                mouse_position = pygame.mouse.get_pos()
-                mouse_turn(mouse_position[0], car, angle_acc)
-                mouse_speed(mouse_position[1], car, acc, dec)
+
+        if simulate:
+            if car.get_engine_state():
                 print(car.get_engine_state())
-            if keystates['up']:
-                speed_up(car, acc)
+                if use_mouse:
+                    mouse_position = pygame.mouse.get_pos()
+                    mouse_turn(mouse_position[0], car, angle_acc)
+                    mouse_speed(mouse_position[1], car, acc, dec)
+                if keystates['up']:
+                    speed_up(car, acc)
 
-            if keystates['down']:
-                speed_down(car, dec)
+                if keystates['down']:
+                    speed_down(car, dec)
 
-            if keystates['left']:
-                angle_left(car, angle_acc)
+                if keystates['left']:
+                    angle_left(car, angle_acc)
 
-            if keystates['right']:
-                angle_right(car, angle_acc)
-        else :
-            if car.get_speed() > 0.05:
-                speed = car.get_speed()
-                frict = (frict/2) * (1 + math.erf( (math.fabs(speed) - 11/2) / (math.sqrt(2 * 4**2)) ))
-                speed = speed + frict * delta
-                car.set_speed(speed)
-            elif car.get_speed() < -0.05:
-                speed = car.get_speed()
-                frict = (frict/2) * (1 + math.erf( (math.fabs(speed) - 11/2) / (math.sqrt(2 * 4**2)) ))
-                speed = speed - frict * delta
-                car.set_speed(speed)
+                if keystates['right']:
+                    angle_right(car, angle_acc)
             else :
-                speed = car.get_speed()
-                speed = 0
-                car.set_speed(speed)
+                if car.get_speed() > 0.05:
+                    speed_frict(car, frict)
+                elif car.get_speed() < -0.05:
+                    speed_frict(car, -frict)
+                else :
+                    speed = car.get_speed()
+                    speed = 0
+                    car.set_speed(speed)
+            if keystates['reset_speed']:
+                car.reset_speed()
+            if keystates['reset_angle']:
+                car.reset_angle()
 
 
 
-        if keystates['reset_speed']:
-            car.reset_speed()
-        if keystates['reset_angle']:
-            car.reset_angle()
+            speed_cur = car.get_speed()
+            angle_cur = car.get_angle()
+
+        else :
+            if car.get_engine_state():
+                if use_mouse:
+                    mouse_position = pygame.mouse.get_pos()
+                
+                if keystates['up']:
+                    pass
+
+                if keystates['down']:
+                    pass
+
+                if keystates['left']:
+                    pass
+
+                if keystates['right']:
+                    pass
+            else :
+                pass
 
 
-
-        speed_cur = car.get_speed()
-        angle_cur = car.get_angle()
         print ("({},{} --> {})".format(speed_cur, angle_cur, (speed_cur - last) / delta))
 except KeyboardInterrupt:
     print ("Exiting through keyboard event (CTRL + C)")
