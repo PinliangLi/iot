@@ -8,11 +8,35 @@ from linuxWiimoteLib import *
 import bluetooth
 import servo_ctl
 import math
+import threading
 
 Real_Motor = servo_ctl.Motor()
 Real_Steering = servo_ctl.Real_Steering()
 One_speed = 5
 Two_speed = 10
+
+
+class Turning(threading.Thread):
+	"""docstring for Turning"""
+	def __init__(self, wii, omega = 0.5):
+		super(Turning, self).__init__()
+		self. wii = wii
+		self.omega = omega
+	
+	def run(self):
+
+		last_rotate = 0
+
+		while True:
+			rotate_x, rotate_y, rotate_z = wiimote.getGyroState()
+			new_rotate = self.omega * rotate_z + (1 - w) * last_rotate
+			actually_rotate = alpa * math.pow(new_rotate, n_pow) + (1 - alpa) * new_rotate
+			Real_Steering.set_angle(actually_rotate)
+			last_rotate = new_rotate
+
+
+			
+
 
 
 device = None
@@ -41,7 +65,10 @@ try:
 	wiimote.SetAccelerometerMode()
 
 	wiistate = wiimote.WiimoteState
+
+	turning = Turning(wiimote)
 	while True:
+
 		# re-calibrate accelerometer
 		if (wiistate.ButtonState.Home):
 			print ('re-calibrating')
@@ -97,7 +124,30 @@ try:
 			print("Reset")
 			Real_Motor.set_speed(0)
 			Real_Steering.set_angle(0)
+
+		if (not wiistate.ButtonState.Home):
+			triple(acc_X, acc_Y, acc_Z) = wiimote.getAccelState()
+			print ("({},{},{})".format(acc_X, acc_Y, acc_Z))
+		else:
+			print 're-calibrating'
+			wiimote.calibrateAccelerometer()
+		if (wiistate.ButtonState.B):
+			triple(angle_X, angle_Y, angle_Z) = wiimote.getGyroState()
+			if angle_Y == 0:
+				speed_cur = 0
+			elif -45 < angle_Y < 0:
+				speed_cur = - angle_Y / 45 * 11
+			elif 0 < angle_Y < 45:
+				speed_cur = angle_Y / 45 * 11
+			elif angle_Y == 45:
+				speed_cur = 11
+			elif angle_Y == -45:
+				speed_cur = -11
+			Real_Motor.set_speed(speed_cur)
+
+
 			
+
 
 
 
