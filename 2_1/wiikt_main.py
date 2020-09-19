@@ -97,6 +97,28 @@ try:
 			print("Reset")
 			Real_Motor.set_speed(0)
 			Real_Steering.set_angle(0)
+
+		if (not wiistate.ButtonState.Home):
+			triple(acc_X, acc_Y, acc_Z) = wiimote.getAccelState()
+			print ("({},{},{})".format(acc_X, acc_Y, acc_Z))
+		else:
+			print 're-calibrating'
+			wiimote.calibrateAccelerometer()
+		if (wiistate.ButtonState.B):
+			triple(angle_X, angle_Y, angle_Z) = wiimote.getGyroState()
+			if angle_Y == 0:
+				speed_cur = 0
+			elif -45 < angle_Y < 0:
+				speed_cur = - angle_Y / 45 * 11
+			elif 0 < angle_Y < 45:
+				speed_cur = angle_Y / 45 * 11
+			elif angle_Y == 45:
+				speed_cur = 11
+			elif angle_Y == -45:
+				speed_cur = -11
+			Real_Motor.set_speed(speed_cur)
+
+
 			
 
 
