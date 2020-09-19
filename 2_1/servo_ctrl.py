@@ -93,7 +93,7 @@ class Steering(object):
     def stop(self):
         self.steering_state = False
 
-    def get_engin_state():
+    def get_steering_state(self):
         return self.steering_state
 
     def PWM_angle_left(self, angle_acc, delta):
