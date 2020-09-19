@@ -96,34 +96,34 @@ def mouse_speed(positionY, Sim_Motor, acc, dec):
         speed_down(Sim_Motor, dec)
 
 def PWM_speed_up(Motor, acc):
-    speed =  Real_Motor.get_speed() + acc * delta  #m -> M
-    Real_Motor.set_speed(speed)
+    speed =  Motor.get_speed() + acc * delta  #m -> M
+    Motor.set_speed(speed)
 
 def PWM_speed_down(Motor, dec):
-    speed =  Real_Motor.get_speed() - dec * delta
-    Real_Motor.set_speed(speed)
+    speed =  Motor.get_speed() - dec * delta
+    Motor.set_speed(speed)
 
 def PWM_angle_left(Motor, angle_acc):
-    angle = Real_Steering.get_angle() + angle_acc * delta
-    Real_Steering.set_angle(angle)
+    angle = Motor.get_angle() + angle_acc * delta
+    Motor.set_angle(angle)
 
 def PWM_angle_right(Motor, angle_acc):
-    angle = Real_Steering.get_angle() - angle_acc * delta
-    Real_Steering.set_angle(angle)
+    angle = Motor.get_angle() - angle_acc * delta
+    Motor.set_angle(angle)
 
 def PWM_mouse_turn(positionX, Motor, angle_acc):      ###new func
     relevateX = positionX - width/2
     if relevateX < -100:
-        PWM_angle_left(Real_Steering, angle_acc)
+        PWM_angle_left(Motor, angle_acc)
     if relevateX > 100:
-        PWM_angle_right(Real_Steering, angle_acc)
+        PWM_angle_right(Motor, angle_acc)
 
 def PWM_mouse_speed(positionY, Motor, acc, dec):      ###new func
     relevateY = positionY - height/2
     if relevateY < -100:
-        PWM_speed_up(Real_Motor, acc)
+        PWM_speed_up(Motor, acc)
     if relevateY > 100:
-        PWM_speed_down(Real_Motor, dec)
+        PWM_speed_down(Motor, dec)
 
 running = True
 try:
@@ -169,6 +169,7 @@ try:
                 if event.key == pygame.K_s:
                     keystates['engine_state'] = True
                     Sim_Motor.change_engine_state()
+                    
                 if event.key == pygame.K_d:
                     keystates['steering_state'] = True
                     Sim_Steering.change_steering_state()

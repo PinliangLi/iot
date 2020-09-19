@@ -9,6 +9,7 @@
 #def write(servo, pulse):
     #gpio_class.write(servo, pulse)
 
+
 class Motor(object):
     PWM_PIN = 1     # GPIO pin 11
     min_pulse = 100
@@ -45,8 +46,23 @@ class Motor(object):
         self.engine_state = False
         pass
 
-    def get_engin_state():
+    def get_engine_state(self):
         return self.engine_state
+
+    def PWM_speed_up(self, acc, delta):
+        self.speed =  self.get_speed() + acc * delta  #m -> M
+        self.set_speed(speed)
+
+    def PWM_speed_down(self, dec, delta):
+        self.speed =  self.get_speed() - dec * delta
+        self.set_speed(speed)
+
+    def PWM_mouse_speed(positionY, self, acc, dec):      ###new func
+        relevateY = positionY - height/2
+        if relevateY < -100:
+            self.PWM_speed_up(self, acc)
+        if relevateY > 100:
+            self.PWM_speed_down(self, dec)
 
 class Steering(object):
     PWM_PIN = 2     # GPIO pin 12
@@ -80,3 +96,17 @@ class Steering(object):
     def get_engin_state():
         return self.steering_state
 
+    def PWM_angle_left(self, angle_acc, delta):
+        angle = self.get_angle() + angle_acc * delta
+        self.set_angle(angle)
+
+    def PWM_angle_right(self, angle_acc, delta):
+        angle = self.get_angle() - angle_acc * delta
+        self.set_angle(angle)
+
+    def PWM_mouse_turn(positionX, self, angle_acc):      ###new func
+        relevateX = positionX - width/2
+        if relevateX < -100:
+            self.PWM_angle_left(self, angle_acc)
+        if relevateX > 100:
+            self.PWM_angle_right(self, angle_acc)

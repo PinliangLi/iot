@@ -67,15 +67,15 @@ class WiimoteState:
 	    zero_pitch = 8208
 
     class AccelState:
-        X = 0
-        Y = 0
-        Z = 0
-        RawX = 0
-        RawY = 0
-        RawZ = 0
-        zeroX = 0
-        zeroY = 0
-        zeroZ = 0
+    	X = 0
+    	Y = 0
+    	Z = 0 
+    	RawX = 0
+    	RawY = 0
+    	RawZ = 0
+    	zeroX = 0
+    	zeroY = 0
+    	zeroZ = 0
 
     class IRState:
         RawX1 = 0
@@ -245,17 +245,16 @@ class Wiimote(threading.Thread):
 		self.datasocket.connect((self.bd_addr,19))
 		self.sendsocket = self.controlsocket
 		self.CMD_SET_REPORT = 0x52
-
 		if self.name == "Nintendo RVL-CNT-01-TR":
-			self.CMD_SET_REPORT = 0xa2
-			self.sendsocket = self.datasocket
+	             self.CMD_SET_REPORT = 0xa2
+	             self.sendsocket = self.datasocket
 
 		try:
 			self.datasocket.settimeout(1)
 		except NotImplementedError:
 			print ("socket timeout not implemented with this bluetooth module")
 
-		print ("Connected to "), self.bd_addr
+		print ("Connected to ", self.bd_addr)
 		self._get_battery_status()
 		self.start_time = datetime.now()
 		#self.f = open('wiimote.log', 'w')
@@ -295,7 +294,7 @@ class Wiimote(threading.Thread):
 		self.running = True
 		while self.running:
 			try:
-				x= map(ord,self.datasocket.recv(32))
+				x= list(self.datasocket.recv(32))
 				#t = datetime.now() - self.start_time
 				#self.packet_time = t.seconds * 1000.0 + t.microseconds / 1000.0
  
@@ -309,6 +308,8 @@ class Wiimote(threading.Thread):
 				#self.packet_number = self.packet_number + 1
 			except bluetooth.BluetoothError:
 				continue
+			print(x)
+			print(len(x))
 			self.state = ""
 			for each in x[:17]:
 				self.state += self.char_to_binary_string(chr(each)) + " "
@@ -480,12 +481,14 @@ class Wiimote(threading.Thread):
 		self.running2 = True
 		while self.running2:
 			try:
-				x= map(ord,self.datasocket.recv(32))
+				x= list(self.datasocket.recv(32))
 			except bluetooth.BluetoothError:
 				continue
+			print(x)
 			self.state = ""
 			for each in x[:17]:
 				if len(x) >= 7:
+					print(x)
 					self.running2 = False
 					battery_level = x[7]
 		self.WiimoteState.Battery = float(battery_level) / float(208)
@@ -545,7 +548,7 @@ if __name__ == "__main__":
 	wiimote._send_data((0x12,0x4,0x35))
 	code.interact(local=locals())
 	while 1:
-		print ("%.2f\t%.2f\t%.2f" %  wiimote.getGyroState())
+		print ("%.2f\t%.2f\t%.2f") %  wiimote.getGyroState()
 		if wiimote.WiimoteState.ButtonState.A:
 			wiimote.calibrateGyro(yaw=0, roll=0)
 		#time.sleep(0.1)
@@ -557,6 +560,7 @@ if __name__ == "__main__":
 	# 	#print wiimote.state
 	# 	print wiimote.WiimoteState.ButtonState.A, wiimote.WiimoteState.ButtonState.B, wiimote.WiimoteState.ButtonState.Up, wiimote.WiimoteState.ButtonState.Down, wiimote.WiimoteState.ButtonState.Left, wiimote.WiimoteState.ButtonState.Right, wiimote.WiimoteState.ButtonState.Minus, wiimote.WiimoteState.ButtonState.Plus, wiimote.WiimoteState.ButtonState.Home, wiimote.WiimoteState.ButtonState.One, wiimote.WiimoteState.ButtonState.Two, wiimote.WiimoteState.IRState.RawX1, wiimote.WiimoteState.IRState.RawY1, wiimote.WiimoteState.IRState.Size1, wiimote.WiimoteState.IRState.RawX2, wiimote.WiimoteState.IRState.RawY2, wiimote.WiimoteState.IRState.Size2
 	# 	#print wiimote.IRState.Found1
+
 
 
 
