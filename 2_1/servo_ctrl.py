@@ -45,7 +45,7 @@ class Motor(object):
         self.engine_state = False
         pass
 
-    def get_engin_state():
+    def get_engine_state(self):
         return self.engine_state
 
 class Steering(object):
@@ -77,6 +77,6 @@ class Steering(object):
     def stop(self):
         self.steering_state = False
 
-    def get_engin_state():
+    def get_steering_state(self):
         return self.steering_state
 
