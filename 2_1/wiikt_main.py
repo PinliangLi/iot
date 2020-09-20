@@ -18,10 +18,13 @@ Two_speed = 10
 
 class Turning(threading.Thread):
 	"""docstring for Turning"""
-	def __init__(self, wii, omega = 0.5):
+	def __init__(self, wii, streeing, omega = 0.5, alpa = 0.5, n_pow = 2):
 		super(Turning, self).__init__()
-		self. wii = wii
+		self.wii = wii
 		self.omega = omega
+		self.streeing = streeing
+		self.alpa = alpa
+		self.n_pow = n_pow
 	
 	def run(self):
 
@@ -30,13 +33,12 @@ class Turning(threading.Thread):
 		while True:
 			rotate_x, rotate_y, rotate_z = wiimote.getGyroState()
 			new_rotate = self.omega * rotate_z + (1 - w) * last_rotate
-			actually_rotate = alpa * math.pow(new_rotate, n_pow) + (1 - alpa) * new_rotate
-			Real_Steering.set_angle(actually_rotate)
+			actually_rotate = self.alpa * math.pow(new_rotate, self.n_pow) + (1 - self.alpa) * new_rotate
+			self.streeing.set_angle(actually_rotate)
 			last_rotate = new_rotate
 
 
 			
-
 
 
 device = None
@@ -66,7 +68,7 @@ try:
 
 	wiistate = wiimote.WiimoteState
 
-	turning = Turning(wiimote)
+	turning = Turning(wiimote, Real_Steering)
 	while True:
 
 		# re-calibrate accelerometer
