@@ -13,8 +13,8 @@ import pygame
 import servo_ctrl
         
 
-width = 800
-height = 600
+width = 400
+height = 200
 
 freq = 50  # Sets the frequency of input procession
 delta = 1.0 / freq # time per step
@@ -46,7 +46,7 @@ keystates = {'quit':False, 'up':False, 'down':False, 'reset_speed':False, 'reset
              'right':False, 'simulate': False}
 use_mouse = False
 simulate = True
-pygame.mouse.set_pos([width/2, height/2])
+pygame.mouse.set_pos([width, height])
 
 def speed_up(Sim_Motor, acc):
     speed = Sim_Motor.get_speed()

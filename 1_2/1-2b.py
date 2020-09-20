@@ -1,5 +1,5 @@
 import threading
-import RPi.GPIO as GPIO 
+#import RPi.GPIO as GPIO 
 import time 
 
 flag = False # Create a flag bool variable
