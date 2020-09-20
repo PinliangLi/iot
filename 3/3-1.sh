@@ -11,3 +11,6 @@ ping 192.168.1.1
 #server time1.rrzn.uni-hannover.de
 sudo service ntp stop
 sudo service ntp start
+
+
+sudo ip route change 172.23.0.0/16 dev ra0

@@ -17,27 +17,26 @@ def thdstart():
     blink1.start()
     blink2.start()
 
-    blink1.join()
-    blink2.join()
+    
 
 class LED(threading.Thread):
-    def __init__(self, freq = 1):
+    def __init__(self, Pin = 17, freq = 1):
         threading.Thread.__init__(self)
         self.freq = freq
         self.period = 1/self.freq # Calculate freq to period
         self.sleeptime = self.period/2 # Calculate period to sleep time
-
+        self.Pin = Pin
         # Initialize gpio mode
-        GPIO.setup(17, GPIO.OUT)
+        GPIO.setup(self.Pin, GPIO.OUT)
 
         # Initialize gpio status
-        GPIO.output(17, 1)
+        GPIO.output(self.Pin, 1)
 
     def run(self):
         flag = False
         while 1:
             time.sleep(self.sleeptime)
-            GPIO.output(17, int(flag)) # Type casting
+            GPIO.output(self, int(flag)) # Type casting
             flag = not flag
 
     def terminate(self):

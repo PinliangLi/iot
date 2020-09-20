@@ -43,7 +43,7 @@ class Turning(threading.Thread):
 
 print ("Prress SYNC on wiimote to make it discoverable")	
 
-
+	
 device = None
 # initialize wiimote
 wiimote = Wiimote()
@@ -71,6 +71,8 @@ try:
 	wiistate = wiimote.WiimoteState
 
 	turning = Turning(wiimote, Real_Steering)
+	turning.start()
+	turning.jion()
 	while True:
 
 		# re-calibrate accelerometer

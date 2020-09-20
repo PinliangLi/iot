@@ -4,7 +4,6 @@ import threading
 import time
 #import RPi.GPIO as GPIO
 
-flag = False # Create a flag bool variable
 
 class LED(threading.Thread):
     def __init__(self, freq = 1):
@@ -21,17 +20,15 @@ class LED(threading.Thread):
         #GPIO.output(17, 1)
 
     def run(self):
-        global flag
+        flag = False
         while 1:
             time.sleep(self.sleeptime)
             #GPIO.output(17, int(flag)) # Type casting
             print(flag)
             flag = not flag
 
-blink = LED(1)
+blink = LED(2)
 
 blink.start()
-
-blink.join()
 
 
