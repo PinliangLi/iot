@@ -1,0 +1,29 @@
+Versuch1 问题
+3.4 进行实验
+第一个测试包括使用终端，控制树莓GPIO和产生PWM信号。
+1. Linux und Bash
+	a) 通过SSH登录到您的Raspberry Pi。
+	b) 在用户Pi的主目录下建立一个文件夹GroupXX，其中XX是你的组号。在此文件夹中创建四个子目
+	录。每项实验室测试都有一项。
+	c)将整个/home/pi/src目录复制到你的组目录中。参见cp命令的man页面。请注意，这个目录属于
+	root用户，所以你需要root权限。复制后，更改复制目录及其所含文件的权限。
+	d) 用grep命令在src目录下搜索字符串TASK。打开相应的文件，执行其中的指令。
+	e) 创建一个bash脚本，使两个LED灯交替亮起一秒钟。使用sys文件系统和sleep命令。查看Bash的
+	man页面(和互联网），了解如何在Bash中实现无限循环。
+		 注：使用提供的电路板。LEDS连接到GPIO端口17（红色）和18（绿色）。
+		 按钮连接到GPIO引脚2。请不要更改此PIN分配!
+	f) 创建另一个bash脚本，定期输出连接按钮的状态。
+
+2. python
+	a) 实现一个 while 循环，使两个 LED 交替亮起一秒钟。使用Python模块RPi.GPIO。
+	b)现在创建一个线程类LED，使LED(在某个引脚上)以给定的频率闪烁。
+	c) 写一个脚本，启动两个LED线程。当按钮被按下时，频率应该被设置为一个新的、随机选择的值。
+	 注：生成随机数对方法可以在随机模块中找到。使用帮助命令，你可以在Python中调用一个模块的文档：例如 import random; help(random)
+
+	d) 加载servod守护进程（可执行文件位于/home/pi/PIBits/ServoBlaster/user）。在11、12脚配置两个Servos系统，基本频率为100HZ。
+	e)将示波器连接到Pin 11。现在以25%的步长改变脉宽，从0%到100%。确定可以产生的最小脉冲宽度.将最大脉冲宽度设置为周期持续时间。对任务中提到的所有步骤进行截图。
+	f) 创建一个Python模块servoblaster_ctl.py.
+	该模块应提供一种方法，通过servoblaster提供的/dev/servoblaster接口配置给定Servo的脉宽。
+		 注意：考虑你在命令行上如何设置PWM脉宽。阅读 os 模块的 Python 文档 （链接），了解如何在 Python 中处理文件。
+	g)修改你的LED线，让LED不再是简单的闪烁，而是借助PWM缓慢的脉冲。为此，应调整PWM信号，使光度在0%和100%之间正弦变化。
+ 
