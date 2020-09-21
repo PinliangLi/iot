@@ -10,8 +10,8 @@ import servo_ctrl
 import math
 import threading
 
-Real_Motor = servo_ctrl.Motor()
-Real_Steering = servo_ctrl.Steering()
+#Real_Motor = servo_ctrl.Motor()
+#Real_Steering = servo_ctrl.Steering()
 One_speed = 5
 Two_speed = -5
 
@@ -36,9 +36,10 @@ class Turning(threading.Thread):
 			new_rotate = self.omega * rotate_z + (1 - w) * last_rotate
 			actually_rotate = self.alpa * math.pow(new_rotate, self.n_pow) + (1 - self.alpa) * new_rotate
 			self.streeing.set_angle(actually_rotate)
-
+			print(actually_rotate)
 			last_rotate = new_rotate
 			sleep(0.1)
+
 
 
 print ("Prress SYNC on wiimote to make it discoverable")	
@@ -70,9 +71,10 @@ try:
 
 	wiistate = wiimote.WiimoteState
 
-	turning = Turning(wiimote, Real_Steering)
-	turning.start()
-	turning.jion()
+	#turning = Turning(wiimote, Real_Steering)
+	#turning = Turning(wiimote)
+	#turning.start()
+	#turning.jion()
 	while True:
 
 		# re-calibrate accelerometer
@@ -83,53 +85,73 @@ try:
 
 		if (wiistate.ButtonState.Up):
 			print("Speed up")
-			Real_Motor.PWM_speed_up(1, 0.1)
-			print("Speed:", Real_Motor.get_speed())
+			#Real_Motor.PWM_speed_up(1, 0.1)
+			#print("Speed:", Real_Motor.get_speed())
+
 
 		if (wiistate.ButtonState.Down):
 			print("Speed down")
-			Real_Motor.PWM_speed_down(1, 0.1)			
-			print("Speed:", Real_Motor.get_speed())
+			#Real_Motor.PWM_speed_down(1, 0.1)
+			#print("Speed:", Real_Motor.get_speed())
 
 		if (wiistate.ButtonState.Left):
 			print("left")
-			Real_Steering.PWM_angle_left(300, 0.1)
-			print("angle:", Real_Steering.get_angle())
+			#Real_Steering.PWM_angle_left(300, 0.1)
+			#print("angle:", Real_Steering.get_angle())
 
 		if (wiistate.ButtonState.Right):
 			print("right")
-			Real_Steering.PWM_angle_right(300, 0.1)
-			print("angle:", Real_Steering.get_angle())
+			#Real_Steering.PWM_angle_right(300, 0.1)
+			#print("angle:", Real_Steering.get_angle())
 
 		if (wiistate.ButtonState.One):
 			print("One Button Down Speed:", One_speed)
-			Real_Motor.set_speed(One_speed)
+			#Real_Motor.set_speed(One_speed)
 
 		if (wiistate.ButtonState.Two):
 			print("Two Button Down Speed:", Two_speed)
-			Real_Motor.set_speed(Two_speed)
+			#Real_Motor.set_speed(Two_speed)
 		
-		Speed = Real_Motor.get_speed()
+		#Speed = Real_Motor.get_speed()
 
-		if 0 < math.fabs(Speed) <= 4:
-			wiimote.SetLEDs(True,False,False,False)
+		#if 0 < math.fabs(Speed) <= 4:
+		#	wiimote.SetLEDs(True,False,False,False)
 
-		elif 4 < math.fabs(Speed) <= 8:
-			wiimote.SetLEDs(True,True,False,False)
+		#elif 4 < math.fabs(Speed) <= 8:
+		#	wiimote.SetLEDs(True,True,False,False)
 
-		elif 8 < math.fabs(Speed) < 11:
-			wiimote.SetLEDs(True,True,True,False)			
+		#elif 8 < math.fabs(Speed) < 11:
+		#	wiimote.SetLEDs(True,True,True,False)
 
-		elif math.fabs(Speed) == 11:
-			wiimote.SetLEDs(True,True,True,True)
+		#elif math.fabs(Speed) == 11:
+		#	wiimote.SetLEDs(True,True,True,True)
 
-		else :
-			wiimote.SetLEDs(False,False,False,False)
+		#else :
+		#	wiimote.SetLEDs(False,False,False,False)
+
+		for i in range(11):
+			if 0 < i <= 4:
+				wiimote.SetLEDs(True, False, False, False)
+
+			elif 4 < i <= 8:
+				wiimote.SetLEDs(True, True, False, False)
+
+			elif 8 < i < 11:
+				wiimote.SetLEDs(True, True, True, False)
+
+			elif i == 11:
+				wiimote.SetLEDs(True, True, True, True)
+
+			else:
+				wiimote.SetLEDs(False, False, False, False)
+
+
+
 
 		if (wiistate.ButtonState.A):
 			print("Reset")
-			Real_Motor.set_speed(0)
-			Real_Steering.set_angle(0)
+			#Real_Motor.set_speed(0)
+			#Real_Steering.set_angle(0)
 
 		
 		if (not wiistate.ButtonState.Home):
@@ -152,7 +174,7 @@ try:
 				speed_cur = 11
 			elif angle_Y == -45:
 				speed_cur = -11
-			Real_Motor.set_speed(speed_cur)
+			#Real_Motor.set_speed(speed_cur)
 
 
 			
