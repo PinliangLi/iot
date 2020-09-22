@@ -25,7 +25,7 @@ angle_acc = 300  # max change of angle (per sec.)
 
 speed_cur = 0
 angle_cur = 0
-
+curr_last = 0
 
 # start main pygame event processing loop here
 pygame.display.init()
@@ -95,51 +95,23 @@ def mouse_speed(positionY, Sim_Motor, acc, dec):
     if relevateY > 100:
         speed_down(Sim_Motor, dec)
 
-def PWM_speed_up(Motor, acc):
-    speed =  Motor.get_speed() + acc * delta  #m -> M
-    Motor.set_speed(speed)
 
-def PWM_speed_down(Motor, dec):
-    speed =  Motor.get_speed() - dec * delta
-    Motor.set_speed(speed)
-
-def PWM_angle_left(Motor, angle_acc):
-    angle = Motor.get_angle() + angle_acc * delta
-    Motor.set_angle(angle)
-
-def PWM_angle_right(Motor, angle_acc):
-    angle = Motor.get_angle() - angle_acc * delta
-    Motor.set_angle(angle)
-
-def PWM_mouse_turn(positionX, Motor, angle_acc):      ###new func
-    relevateX = positionX - width/2
-    if relevateX < -100:
-        PWM_angle_left(Motor, angle_acc)
-    if relevateX > 100:
-        PWM_angle_right(Motor, angle_acc)
-
-def PWM_mouse_speed(positionY, Motor, acc, dec):      ###new func
-    relevateY = positionY - height/2
-    if relevateY < -100:
-        PWM_speed_up(Motor, acc)
-    if relevateY > 100:
-        PWM_speed_down(Motor, dec)
 
 running = True
 try:
     while running:
         # set clock frequency
-        clock.tick(freq);
+        clock.tick(freq)
         
         # save the last speed 4 analysis
         last = speed_cur
         angle_last = angle_cur
         acc=2.6
         dec=4.5
-        frict=-1
-        PWM_speed_acc = 1
-        PWM_speed_dec = 1
-        PWM_angle_acc = 100
+        frict=-1.0
+        PWM_speed_acc = 1.0
+        PWM_speed_dec = 1.0
+        PWM_angle_acc = 100.0
         # process input events
         for event in pygame.event.get():
         
@@ -169,10 +141,12 @@ try:
                 if event.key == pygame.K_s:
                     keystates['engine_state'] = True
                     Sim_Motor.change_engine_state()
+                    Real_Motor.change_engine_state()
                     
                 if event.key == pygame.K_d:
                     keystates['steering_state'] = True
                     Sim_Steering.change_steering_state()
+                    Real_Steering.change_steering_state()
                 if event.key == pygame.K_m:
                     if use_mouse:
                         use_mouse = False
@@ -262,32 +236,32 @@ try:
 
             speed_cur = Sim_Motor.get_speed()
             angle_cur = Sim_Steering.get_angle()
+            print("({},{} --> {})".format(speed_cur, angle_cur, (speed_cur - last) / delta))
 
         else :
+            print(Real_Motor.get_engine_state())
+            print("({},{} --> {})".format(Real_Motor.get_speed(), Real_Steering.get_angle(), (Real_Motor.get_speed() - curr_last) / delta))
             if Real_Motor.get_engine_state():
                 if use_mouse:
                     mouse_position = pygame.mouse.get_pos()
-                    PWM_mouse_speed(mouse_position[1], Real_Motor, PWM_speed_acc, PWM_speed_dec)
+                    Real_Motor.PWM_mouse_speed(mouse_position[1], PWM_speed_acc, PWM_speed_dec, height)
                 if keystates['up']:
-                    PWM_speed_up(Real_Motor, PWM_speed_acc)
+                    Real_Motor.PWM_speed_up(PWM_speed_acc, delta)
                 if keystates['down']:
-                    PWM_speed_down(Real_Motor, PWM_speed_dec)
+                    Real_Motor.PWM_speed_down(PWM_speed_dec, delta)
             else :
                 pass
 
             if Real_Steering.get_steering_state():
                 if use_mouse:
                     mouse_position = pygame.mouse.get_pos() 
-                    PWM_mouse_turn(mouse_position[0], Real_Steering, PWM_angle_acc)
+                    Real_Steering.PWM_mouse_turn(mouse_position[0], PWM_angle_acc, width)
                 if keystates['left']:
-                    PWM_angle_left(Real_Steering, PWM_angle_acc)
+                    Real_Steering.PWM_angle_left(PWM_angle_acc, delta)
                 if keystates['right']:
-                    PWM_angle_right(Real_Steering, PWM_angle_acc)
-            else :
-                pass
+                    Real_Steering.PWM_angle_right(PWM_angle_acc, delta)
+            curr_last = Real_Motor.get_speed()
 
-
-        print ("({},{} --> {})".format(speed_cur, angle_cur, (speed_cur - last) / delta))
 except KeyboardInterrupt:
     print ("Exiting through keyboard event (CTRL + C)")
     

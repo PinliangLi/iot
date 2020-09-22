@@ -5,7 +5,7 @@ class Motor(pygame.sprite.Sprite):
     """docstring for Car"""
 
     def __init__(self, speed = 0, engine_state = True):
-        super().__init__()
+        super(Motor, self).__init__()
         if speed > 11 :
             speed = 11
         if speed < -11 :
@@ -36,7 +36,7 @@ class Motor(pygame.sprite.Sprite):
 class Steering(pygame.sprite.Sprite):
 
     def __init__(self, angle = 0, steering_state = True):
-        super().__init__()
+        super(Steering, self).__init__()
         if angle > 45 :
             angle = 45
         if angle < -45 :
